@@ -19,7 +19,7 @@ matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fr
 
 Résultats : image found at timestamps: {10.416666666666666: 88.75721096992493, 10.5: 89.77494239807129, 10.583333333333334: 90.58698415756226, 56.5: 92.62803792953491}
 
-=============================================================================================================================================================================
+============================================================================================================
 
 Changements : implémentation de la vitesse adaptative en fonction du pourcentage de ressemblance
 
@@ -29,7 +29,7 @@ matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fo
 
 Résultats : image found at timestamps: {10.583333333333334: 90.63405990600586}
 
-=============================================================================================================================================================================
+============================================================================================================
 
 Changements : implémentation de la file de voiture (on check les frames précédentes au moment ou on ralentit pour être sur d'avoir rien raté)
 
@@ -39,7 +39,7 @@ matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fo
 
 Résultats : image found at timestamps: {10.5: 89.82644081115723, 10.383333333333333: 89.16247487068176, 10.433333333333334: 88.39675188064575, 10.55: 88.79101276397705, 10.583333333333334: 90.63405990600586}
 
-/*========================================================================================================================================================================================*/
+/*==========================================================================================================*/
 
 On constate donc que la méthode de la file de voiture est plus rapide et plus précise avec les bon paramètre. Voici un exemple de répartition des image en fonction des seuil pour donner une idée de comment ça marche:
 
