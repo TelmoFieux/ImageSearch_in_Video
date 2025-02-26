@@ -104,11 +104,7 @@ def encode_les_images():
                                   device=device)
     return encoded_images
         
-#Cette fonction calcule la similarité entre toute les pairs le nombre de comparaison est donc exponentielle ~1sec pour cheque 1 frame avec 7 image
-#!Batch : 1.27 it/s avec 5 image en moyenne cpu batch size = 4
-#!Batch : 5.4 it/s avec 5 image en moyenne cpu batch size = 2
-#!Batch : 9 it/s {entre 7 et 10} avec 5 image en moyenne gpu batch size = 2 | Batches 3/3
-#!Batch : 15 it/s {entre 11 et 14.5} avec 5 image en moyenne gpu batch size = 2 | Batches 5/5
+#Cette fonction calcule la similarité entre toute les pairs le nombre de comparaison est donc exponentielle
 
 def find_matching_imagesV1(frame_path):
     image_names = list(glob.glob('./*.jpg'))
@@ -135,9 +131,6 @@ def find_matching_imagesV1(frame_path):
             return (score * 100)
     return 0
 
-#!Batch : 3 it/s avec 5 image en moyenne avec batch size =4 batches : 1/1 avec gpu
-#!Batch : 6 it/s {entre 5 et 7 it/s} avec 5 image en moyenne avec batch size =2 batches 2/2 avec gpu
-#!Batch : 12 it/s avec 5 image en moyenne avec batch size =1 batches 4/4 avec gpu
 def find_matching_imagesV2(frame_path,encoded_images):
     # Encode the image you want to compare, and move it to DirectML device
     frame_image_embedding = model.encode([Image.open(frame_path)], batch_size=1 ,convert_to_tensor=True, device=device)
@@ -247,47 +240,28 @@ def scan_video(videopath):
 #? KEY PARAMETERS
 
 VIDEO_SCANNED = "Ratchet_et_clank_2_part_7_CRF.mp4"
-# Your API key
-api_key = "AIzaSyC2Cu8XuWriAThd9WCDGu8Fu6Hr1hXf9-0"
-# Your Custom Search Engine ID
-cx = "864321e25f92e4f4e"
-# The search query
-query = "Ratchet and Clank ps2 hydropack"
-# Number of request (10 images per request)
+# Your API key for the google search if you want to use it
+api_key = "your api key"
+# Your Custom Search Engine ID for the google image search
+cx = "your id"
+# The search query if you use google image search
+query = "Your search query"
+# Number of request (10 images per request) for the google image search
 num_requests = 2
 # seuil d'acceptation pour la similarité entre image valeur comprise entre 0 et 100
-# 85 pour le modele complet semble bien et 88 pour le modele half semble similaire au modèle complet
+# Si une frame de la vidéo est au dessus de X% on considère que c'est un succès et qu'on a trouvé ce que l'on cherchait
 matchin_images_treshold = 88
-# les images ayant plus de X% de ressemblance seront supprimé valeur comprise entre 0 et 1
+# les images ayant plus de X% de ressemblance parmis les images obtenu après la recherche via google image search seront supprimé valeur comprise entre 0 et 1
 filtering_treshold = 0.80
-#Seuil pour la vitesse adaptative [seuil en pourcentage : vitesse en seconde]
+#Seuil pour la vitesse adaptative [seuil en pourcentage : vitesse en seconde] utilisé si file_de_voiture = True. Explication de cette méthode dans le fichier ReadMe
 seuil={75:20,80:10,85:5,90:2,100:2}
 #Décide si on utilise la méthode file de voiture expliquer dans performane.txt| Permet une approche intélligente qui mixe rapidité et fiabilité.
 file_de_voiture=True
 
-
-
-"""if "__main__" == "__main__":
-    # Load the OpenAI CLIP Model
-    print('Loading CLIP Model...')
-    #model = SentenceTransformer('clip-ViT-B-32')
-    get_images(query,api_key,cx)
-    #scan_video(VIDEO_SCANNED)"""
-
-
-"""#test the time with cpu
-print('Loading CLIP Model...')
-model = SentenceTransformer('clip-ViT-B-32')
-#get_images(query,api_key,cx,num_requests)
-#filter_image()
-execution_time = timeit.timeit(scan_video(VIDEO_SCANNED), number=1)
-print(f"Execution time: {execution_time}")"""
-
-# Initialize the DirectML device (this will use AMD GPU)
+# Initialize the DirectML device
 device = torch_directml.device()
-# Load the model and move it to DirectML device (AMD GPU)
+# Load the model and move it to DirectML device
 model = SentenceTransformer('clip-ViT-B-32').to(device)
-#get_images(query,api_key,cx,num_requests)
+#get_images(query,api_key,cx,num_requests) if you use the google image search
 #filter_image()
-total_time = timeit.timeit(lambda : scan_video(VIDEO_SCANNED), number=1)
-print(f"Mean time {total_time:.3e} s")
+scan_video(VIDEO_SCANNED)
