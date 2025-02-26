@@ -25,7 +25,7 @@ matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fr
 
 Résults : image found at timestamps: {10.416666666666666: 88.75721096992493, 10.5: 89.77494239807129, 10.583333333333334: 90.58698415756226, 56.5: 92.62803792953491}
 
-============================================================================================================
+=====================================================================================================
 
 After implementation of adaptative speed
 
@@ -35,7 +35,7 @@ matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fo
 
 Résults : image found at timestamps: {10.583333333333334: 90.63405990600586}
 
-============================================================================================================
+======================================================================================================
 
 After implementation of chekcing frame befor the trigger frame when slowing down
 
@@ -45,7 +45,7 @@ matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fo
 
 Résults : image found at timestamps: {10.5: 89.82644081115723, 10.383333333333333: 89.16247487068176, 10.433333333333334: 88.39675188064575, 10.55: 88.79101276397705, 10.583333333333334: 90.63405990600586}
 
-/*==========================================================================================================*/
+/*===================================================================================================*/
 
 We clearly see that the "car queue" method is faster and more reliable than the brute force methode. Here is an exemple of how the distribution of images work in my testings :
 
