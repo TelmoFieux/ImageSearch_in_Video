@@ -1,47 +1,53 @@
 # ImageSearch_in_Video
-Ce programme en python permet de scanner une vidéo pour tenter de trouver une image au sein de celle ci qui correspond a une image que l'utilisateur cherche. Pour cela vous pouvez importer vos propres images ou faire une recherche d'image via l'API de google. Si vous le faites il faudra paramétré le nombre d'image récupéré, la recherche effectué, mais aussi paramétré votre propre clé et search engine.
+This Python program scans a video to find an image within it that matches an image the user is looking for. To do this, you can either import your own images or perform an image search using the Google API. If you choose the latter, you will need to configure the number of retrieved images, the search query, and provide your own API key and search engine ID.
 
-Pour ce qui est du fonctionnement du programme en lui même, il parcours la vidéo et extrait une image toute les X frames. Cette image et comparé au images fourni par l'utilisateur grâce à un model d'IA. Si le seuil de ressemblance est passé, alors on enregistre le timestamp. Le seuil de ressemblance ainsi que la fréquence d'analyse sont paramétrable. A la fin sont affiché tout les timestamp qui ont passé le seuil de ressemblance avec le coefficient de ressemblance affiché.
-J'ai implémenté une deuxième méthode un peu moins "bruttte de décoffrage" que j'ai appelé la file de voiture et qui suis ce principe:
+Regarding how the program works, it processes the video and extracts an image every X frames. This image is then compared to the images provided by the user using an AI model. If the similarity threshold is met, the timestamp is recorded. Both the similarity threshold and the analysis frequency are configurable. At the end, all timestamps that exceeded the similarity threshold are displayed along with their corresponding similarity scores.
 
-Cette méthode part du principe que plus on se rapproche d'une séquence de la vidéo ou se trouve l'élément recherché, plus le coeffictient de ressemblance augmentera. Par exemple si je cherche une séquence aquatique dans ma vidéo et que donc mes image de références ont beaucoup de teinte bleu, plus je me repproche de cette séquence plus les coefficient de ressemblance seront élevé. On va donc appliqué des seuil arbitraire pour lesquels il faudra effectué des test pour trouver le "sweet spot". Dans le programme se trouve ma configuration qui a plutôt bien marché pour moi mais on peut surement trouver mieux. Par exemple si le coefficent de ressemblance detecté est 50% on va passer le frame_gap a 10 sec au lieu de 5sec car on est probablement loin de la séquence recherché. A l'inverse, si le coefficient augmente par exemple 80, on va passer de 5 a 2 sec. Voici une petite illustration:
+I have implemented a second method, which is a bit less "brute-force" and which I have called the "car queue" method, following this principle:
+
+This method assumes that as we get closer to a sequence in the video where the searched element appears, the similarity coefficient will increase. For example, if I am looking for an aquatic sequence in my video and my reference images contain a lot of blue shades, the similarity scores will increase as I approach that sequence. Arbitrary thresholds are applied, and testing is required to find the optimal "sweet spot." The program includes a configuration that worked well for me, but better settings might be found.
+
+For instance, if the detected similarity coefficient is 50%, the frame_gap is set to 10 seconds instead of 5 seconds because we are likely far from the desired sequence. Conversely, if the similarity coefficient reaches 80%, we reduce the frame_gap from 5 seconds to 2 seconds. Here is a small illustration:
 
 ![Logo](./file_de_voiture.png)
 
-Enfin, pour s'assurer qu'on ne rate rien au cas ou on a "freiné" trop vite, on va revenir légèrement en arrière avec le nouveau frame_gap.
-Dans cette exemple on check toute les frame entre la frame trigger et la précédente avec le nouvel intervalle ici 2. On verifiera alors 2 frame en arrière avant de continuer. Attention les frames arrière qu'on check ne modifie pas la vitesse de la file.
-Cela permet donc d'assurer qu'on a pas sauté le passage recherché et coûte peu cher en puissance de calcul. On rajoute entre 1 et 2 frame a vérifier. L'important est de trouver une bonne configuration pour éviter de trop "freiner".
-Voici un exemple de benchemark avec une video de 1h54 sur mon PC portable avec un Processeur ryzen 5600 with integrated gpu pour montrer les différence de performance : 
+Finally, to ensure that nothing is missed in case we "braked" too quickly, we slightly go back using the new frame_gap.
 
-Test 1 : 2min48sec  check toute les 5 secondes pour la vidéo "Ratchet_et_clank_2_part_7_CRF.mp4" de 1h54
+In this example, we check all frames between the trigger frame and the previous one using the new interval (here, 2). This means we will verify 2 frames backward before continuing. However, note that the checked backward frames do not affect the speed of the queue.
+
+This approach ensures that we don't skip the desired segment while keeping computational cost low. We only add 1 to 2 extra frames to check. The key is to find a good configuration to avoid braking too hard.
+
+Here is a benchmark example using a 1h54 video on my laptop with a Ryzen 5600 processor with integrated GPU, showcasing the performance differences:
+
+Test 1 : 2min48sec  check every 5 secondes for the video "Ratchet_et_clank_2_part_7_CRF.mp4" that last 1h54
 matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | frame_gap = 300 | fonction utilisé : V2 avec gpu | batche_size=1
-6 image de reference + extracted frame
+6 images + extracted frame
 
-Résultats : image found at timestamps: {10.416666666666666: 88.75721096992493, 10.5: 89.77494239807129, 10.583333333333334: 90.58698415756226, 56.5: 92.62803792953491}
+Résults : image found at timestamps: {10.416666666666666: 88.75721096992493, 10.5: 89.77494239807129, 10.583333333333334: 90.58698415756226, 56.5: 92.62803792953491}
 
 ============================================================================================================
 
-Changements : implémentation de la vitesse adaptative en fonction du pourcentage de ressemblance
+After implementation of adaptative speed
 
 Test 2 : 1min08sec  seuil={75:20,80:10,85:5,90:2,100:2}  pour la vidéo "Ratchet_et_clank_2_part_7_CRF.mp4" de 1h54
 matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fonction utilisé : V2 avec gpu | batche_size=1 
 6 image de reference + extracted frame
 
-Résultats : image found at timestamps: {10.583333333333334: 90.63405990600586}
+Résults : image found at timestamps: {10.583333333333334: 90.63405990600586}
 
 ============================================================================================================
 
-Changements : implémentation de la file de voiture (on check les frames précédentes au moment ou on ralentit pour être sur d'avoir rien raté)
+After implementation of chekcing frame befor the trigger frame when slowing down
 
 Test 3 : 1min27sec  seuil={75:20,80:10,85:5,90:2,100:2}  pour la vidéo "Ratchet_et_clank_2_part_7_CRF.mp4" de 1h54
 matchin_images_treshold = 88 | num_requests = 2 | filtering_treshold = 0.80 | fonction utilisé : V2 avec gpu | batche_size=1 | programme_recherche_intelligent
 6 image de reference + extracted frame
 
-Résultats : image found at timestamps: {10.5: 89.82644081115723, 10.383333333333333: 89.16247487068176, 10.433333333333334: 88.39675188064575, 10.55: 88.79101276397705, 10.583333333333334: 90.63405990600586}
+Résults : image found at timestamps: {10.5: 89.82644081115723, 10.383333333333333: 89.16247487068176, 10.433333333333334: 88.39675188064575, 10.55: 88.79101276397705, 10.583333333333334: 90.63405990600586}
 
 /*==========================================================================================================*/
 
-On constate donc que la méthode de la file de voiture est plus rapide et plus précise avec les bon paramètre. Voici un exemple de répartition des image en fonction des seuil pour donner une idée de comment ça marche:
+We clearly see that the "car queue" method is faster and more reliable than the brute force methode. Here is an exemple of how the distribution of images work in my testings :
 
 Pour la recherche Ratchet and Clank ps2 hydropack sur la vidéo Ratchet_et_clank_2_part_7_CRF.mp4 avec 5 sec de frame gap:
 
@@ -54,7 +60,11 @@ Pour la recherche Ratchet and Clank ps2 hydropack sur la vidéo Ratchet_et_clank
 - 170 décélération
 time : 168 sec
 
-C'est a peu près tout pour ce programme. Il est toujours possible de modifier des élément pour le rendre plus performant. Changer de modèle, changer le batch_size en fonction de la puissance de votre gpu etc. A noter que j'ai développé ce programme sur un gpu amd je ne sais pas si cela fonctionne sur un gpu nvidia.
+I have a testing file that produces this output. You can try it to find the best configuration.
+
+That's pretty much everything for this program. It is always possible to modify certain elements to make it more efficient, such as changing the model or adjusting the batch_size based on your GPU's power.
+
+Note that I developed this program on an AMD GPU. you may need to tweak a few things to make it work on an Nvidia gpu. I have a colab file in the repo that uses nvidia gpu if you wanna try it.
 
 
 # Installation
