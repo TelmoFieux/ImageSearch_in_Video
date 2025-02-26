@@ -7,7 +7,6 @@ J'ai implémenté une deuxième méthode un peu moins "bruttte de décoffrage" q
 Cette méthode part du principe que plus on se rapproche d'une séquence de la vidéo ou se trouve l'élément recherché, plus le coeffictient de ressemblance augmentera. Par exemple si je cherche une séquence aquatique dans ma vidéo et que donc mes image de références ont beaucoup de teinte bleu, plus je me repproche de cette séquence plus les coefficient de ressemblance seront élevé. On va donc appliqué des seuil arbitraire pour lesquels il faudra effectué des test pour trouver le "sweet spot". Dans le programme se trouve ma configuration qui a plutôt bien marché pour moi mais on peut surement trouver mieux. Par exemple si le coefficent de ressemblance detecté est 50% on va passer le frame_gap a 10 sec au lieu de 5sec car on est probablement loin de la séquence recherché. A l'inverse, si le coefficient augmente par exemple 80, on va passer de 5 a 2 sec. Voici une petite illustration:
 
 thread 1   Thread 1	Thread 1	Thread 1       Thread 1 detecte une proba élévé	          thread 1   Thread 1	Thread 1	Thread 1
-   
    300	      600 	   900		   1200		-------------------------------->	    960	      1080        1320		  1440
 		{Check toutes les 5 sec}		{check toute les 2 sec par exemple
 							l'important c'est qu'on ralentit}
