@@ -55,3 +55,23 @@ Pour la recherche Ratchet and Clank ps2 hydropack sur la vidéo Ratchet_et_clank
 time : 168 sec
 
 C'est a peu près tout pour ce programme. Il est toujours possible de modifier des élément pour le rendre plus performant. Changer de modèle, changer le batch_size en fonction de la puissance de votre gpu etc. A noter que j'ai développé ce programme sur un gpu amd je ne sais pas si cela fonctionne sur un gpu nvidia.
+
+
+# Installation
+
+Locally : 
+
+I recommend using conda :
+conda create -n myenv python=3.10
+-pip install sentence-transformers
+-installer requests
+-installer opencv-python
+-pip install torch-directml
+
+You will not need torch-directml on nvidia GPU
+
+Google collab :
+
+You can use it on collab even though it may take some time to import your video file especially if they are heavy. I have a notebook file on this repo you can use.
+
+
